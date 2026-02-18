@@ -13,3 +13,4 @@ class Task(SQLModel, table=True):
     urgent: bool = False
     created_at: datetime =Field(default_factory=lambda :datetime.now(timezone.utc))
     updated_at: datetime =Field(default_factory=lambda :datetime.now(timezone.utc))
+    deleted_at: datetime =Field(default_factory=lambda :datetime.now(timezone.utc))

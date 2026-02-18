@@ -15,7 +15,7 @@ def create_task(task_schema: TaskCreate, session: Session) -> Task:
 
 def get_tasks(session: Session):
     
-    statement = select(Task)
+    statement = select(Task).where(Task.deleted_at == None)
     tasks = session.exec(statement).all()
     return tasks
 
