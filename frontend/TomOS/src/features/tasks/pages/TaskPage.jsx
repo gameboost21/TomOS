@@ -3,6 +3,7 @@ import { useTasks } from "../hooks/useTasks.js";
 import { useCreateTask } from "../hooks/useCreateTask.js";
 import { useUpdateTask } from "../hooks/useUpdateTask.js";
 import { Calendar } from "primereact/calendar"
+import TaskList from "../components/TaskList.jsx";
 
 const EMPTY_FORM = {
         task_name: "",
@@ -64,6 +65,7 @@ function TaskPage() {
       } catch(err) {
         console.error("Failed to update Task", err)
       }
+      if (task.done === checked) return;
     }
 
     
@@ -79,96 +81,33 @@ function TaskPage() {
 
       {/* ACTIVE TASK GRID */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {activeTasks.map((task) => (
-          <div
-            key={task.id}
-            className="bg-white p-5 rounded-xl shadow-sm border hover:shadow-md transition"
-          >
-            <div className="flex justify-between items-center">
-              <h3 className="font-semibold text-lg">{task.task_name}</h3>
-              {task.urgent && (
-                <span className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded">
-                  Urgent
-                </span>
-              )}
-            </div>
-
-            <p className="text-gray-500 mt-2 text-sm">{task.description}</p>
-
-            <div className="text-xs text-gray-400 mt-2">
-              Assigned to {task.assignee}
-            </div>
-
-            <div className="text-xs text-gray-400 mt-1">
-              Due: {task.due_date ? new Date(task.due_date).toLocaleDateString() : "-"}
-            </div>
-
-            <div className="mt-2 flex items-center gap-2">
-              <input 
-                type="checkbox" 
-                checked={task.done} 
-                onChange={(e) => {
-                    handleToggleDone(task, e.target.checked)
-                }}
-            />
-              <span className="text-sm">Done</span>
-            </div>
-          </div>
-        ))}
+        <TaskList 
+          tasks={activeTasks}
+          onToggleDone={handleToggleDone}
+        />
       </div>
 
       {/* COLLAPSIBLE COMPLETED TASKS */}
       {completedTasks.length > 0 && (
-        <div className="mt-6">
-          <button
-            onClick={() => setShowDone(!showDone)}
-            className="text-blue-600 font-medium underline mb-2"
-          >
-            {showDone ? "Hide Completed Tasks" : `Show Completed Tasks (${completedTasks.length})`}
-          </button>
+      <div className="mt-6">
+        <button
+          onClick={() => setShowDone(!showDone)}
+          className="text-blue-600 font-medium underline mb-2"
+        >
+          {showDone
+            ? "Hide Completed Tasks"
+            : `Show Completed Tasks (${completedTasks.length})`}
+        </button>
 
-          {showDone && (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
-              {completedTasks.map((task) => (
-                <div
-                  key={task.id}
-                  className="bg-gray-50 p-5 rounded-xl shadow-sm border hover:shadow-md transition opacity-70"
-                >
-                  <div className="flex justify-between items-center">
-                    <h3 className="font-semibold text-lg line-through">{task.task_name}</h3>
-                    {task.urgent && (
-                      <span className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded">
-                        Urgent
-                      </span>
-                    )}
-                  </div>
-
-                  <p className="text-gray-500 mt-2 text-sm line-through">{task.description}</p>
-
-                  <div className="text-xs text-gray-400 mt-2">
-                    Assigned to {task.assignee}
-                  </div>
-
-                  <div className="text-xs text-gray-400 mt-1">
-                    Due: {task.due_date ? new Date(task.due_date).toLocaleDateString() : "-"}
-                  </div>
-
-                  {/* DONE TOGGLE */}
-                  <div className="mt-2 flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={task.done}
-                      onChange={(e) => {
-                        handleToggleDone(task, e.target.checked)
-                      }}
-                    />
-                    <span className="text-sm">Done</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        {showDone && (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <TaskList
+              tasks={completedTasks}
+              onToggleDone={handleToggleDone}
+            />
+          </div>
+        )}
+      </div>
       )}
 
       {/* CREATE TASK FORM */}
