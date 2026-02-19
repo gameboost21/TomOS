@@ -1,4 +1,4 @@
-function TaskCard({task, onToggleDone}) {
+function TaskCard({task, onToggleDone, onDelete}) {
     return (
     <div className={`p-5 rounded-xl shadow-sm border transition
         ${task.done ? "bg-gray-50 opacity-70" : "bg-white hover:shadow-md"}
@@ -14,8 +14,15 @@ function TaskCard({task, onToggleDone}) {
             Urgent
           </span>
         )}
-      </div>
+      
 
+      <button 
+        onClick={() => onDelete(task)} 
+        className="text-red-500 text-sm hover:text-red-700"
+      >
+        Delete
+      </button>
+      </div>
       <p className={`mt-2 text-sm text-gray-500 ${task.done && "line-through"}`}>
         {task.description}
       </p>

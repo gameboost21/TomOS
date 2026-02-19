@@ -23,7 +23,7 @@ def get_all_tasks(session: Session = Depends(get_session)):
 def get_task(id: int, session: Session = Depends(get_session)):
     return get_task_service(id, session)
 
-@router.delete("/tasks/{id}")
+@router.delete("/tasks/{id}", status_code=204)
 def delete_task(id: int, session: Session = Depends(get_session)):
     return delete_task_service(id, session)
 

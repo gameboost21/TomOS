@@ -39,3 +39,14 @@ export async function updateTaskId(id, updatedTask) {
 
     return res.json()
 }
+
+export async function deleteTaskId(id) {
+    const res = await fetch(`/api/tasks/${id}`, {
+        method: "DELETE"
+    })
+    if (!res.ok) {
+        throw new Error(`Failed to delete task with ID: ${id}`)
+    }
+    if (res.status === 204) return null;
+    return res.json()
+}

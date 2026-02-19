@@ -1,5 +1,6 @@
 from sqlmodel import Session, select
-from fastapi import HTTPException
+from fastapi import HTTPException, Response
+from datetime import datetime, timezone
 
 from domains.tasks.models.task_models import Task
 from domains.tasks.schemas.task_schemas import TaskCreate, TaskUpdate
@@ -15,7 +16,7 @@ def create_task(task_schema: TaskCreate, session: Session) -> Task:
 
 def get_tasks(session: Session):
     
-    statement = select(Task).where(Task.deleted_at == None)
+    statement = select(Task).where(Task.deleted_at.is_(None))
     tasks = session.exec(statement).all()
     return tasks
 
@@ -35,16 +36,20 @@ def delete_task(id: int, session: Session):
 
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
+    
+    if task.deleted_at is not None:
+        return Response(status_code=204)
 
-    session.delete(task)
+    task.deleted_at = datetime.now(timezone.utc)
+
     session.commit()
 
-    return "Task Deleted Successfully"
+    return Response(status_code=204)
 
 def update_task(id: int, task_schema: TaskUpdate, session: Session) -> Task:
     
     updates = task_schema.model_dump(exclude_unset=True).items()
-    statement = select(Task).where(Task.id == id)
+    statement = select(Task).where(Task.id == id, Task.deleted_at.is_(None))
     task = session.exec(statement).one_or_none()
 
     if not task:

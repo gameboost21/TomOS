@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTasks } from "../hooks/useTasks.js";
 import { useCreateTask } from "../hooks/useCreateTask.js";
 import { useUpdateTask } from "../hooks/useUpdateTask.js";
+import { useDeleteTask } from "../hooks/useDeleteTask.js";
 import { Calendar } from "primereact/calendar"
 import TaskList from "../components/TaskList.jsx";
 
@@ -22,10 +23,9 @@ function TaskPage() {
     const { task_name, description, due_date, assignee, urgent } = form;
 
     const {data: tasks, isPending, isError, error} = useTasks()
-
     const {mutateAsync, isPending: isCreating} = useCreateTask()
-
     const {mutateAsync: updateTask} = useUpdateTask();
+    const { mutateAsync: deleteTask } = useDeleteTask();
 
     if (isPending) {
             return <div>Loading....</div>
@@ -68,7 +68,18 @@ function TaskPage() {
       if (task.done === checked) return;
     }
 
-    
+    const handleDelete = async (task) => {
+      const confirmed = window.confirm(
+        `Are you sure you want to delete "${task.task_name}"`
+      )
+      if (!confirmed) return;
+
+      try{
+        await deleteTask({ id: task.id })
+      } catch (err){
+        console.error("Failed to delete task", err)
+      }
+    }
 
   return (
     <div className="space-y-10 p-4">
@@ -84,6 +95,7 @@ function TaskPage() {
         <TaskList 
           tasks={activeTasks}
           onToggleDone={handleToggleDone}
+          onDelete={handleDelete}
         />
       </div>
 
@@ -104,6 +116,7 @@ function TaskPage() {
             <TaskList
               tasks={completedTasks}
               onToggleDone={handleToggleDone}
+              onDelete={handleDelete}
             />
           </div>
         )}
