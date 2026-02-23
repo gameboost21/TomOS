@@ -25,7 +25,7 @@ from domains.users.services.user_service import require_viewer as viewer
 #def get_all_users_endpoint(user: Users = Depends(admin), session: Session = Depends(get_session)):
 #    return get_users_service()
     
-#@router.get("/tasks/{id}")
+#@router.get("/users/{id}")
 #def get_user_endpoint(user: Users = Depends(admin), session: Session = Depends(get_session)):
 #    return get_user_service()
 
