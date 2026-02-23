@@ -1,7 +1,24 @@
+import { useAuth } from "../../users/hooks/useAuth";
+
+const getAuthHeaders = () => {
+    const { token } = useAuth();
+    return token ?  {
+        "Authorization":`Bearer ${token}`,
+        "Content-Type":"application/json"
+    } : {
+        "Content-Type":"application/json"
+    }
+}
+
 export async function fetchTasks() {
-    const res = await fetch("/api/tasks")
+    const res = await fetch("/api/tasks", {
+        headers: getAuthHeaders()
+    })
 
     if (!res.ok) {
+        if (res.status === 401) {
+            throw new Error("Unauthorized - please log in")
+        }
         throw new Error("Failed to fetch tasks")
     }
 
@@ -11,9 +28,7 @@ export async function fetchTasks() {
 export async function createTask(newTask) {
     const res = await fetch("/api/tasks", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(newTask),
     })
 
@@ -27,9 +42,7 @@ export async function createTask(newTask) {
 export async function updateTaskId(id, updatedTask) {
     const res = await fetch(`/api/tasks/${id}`, {
         method: "PUT",
-        headers: {
-            "Content-Type":"application/json",
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(updatedTask)
     })
 
@@ -42,7 +55,8 @@ export async function updateTaskId(id, updatedTask) {
 
 export async function deleteTaskId(id) {
     const res = await fetch(`/api/tasks/${id}`, {
-        method: "DELETE"
+        method: "DELETE",
+        headers: getAuthHeaders(),
     })
     if (!res.ok) {
         throw new Error(`Failed to delete task with ID: ${id}`)

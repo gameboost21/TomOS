@@ -1,6 +1,6 @@
 import TaskCard from "./TaskCard";
 
-function TaskList({ tasks, onToggleDone }) {
+function TaskList({ tasks, onToggleDone, onDelete }) {
   if (!tasks.length) return null;
 
   return (
@@ -10,6 +10,7 @@ function TaskList({ tasks, onToggleDone }) {
           key={task.id}
           task={task}
           onToggleDone={onToggleDone}
+          onDelete={onDelete}
         />
       ))}
     </div>
