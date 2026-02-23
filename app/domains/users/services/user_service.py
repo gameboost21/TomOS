@@ -91,25 +91,24 @@ def login_user(username: str, password: str, session: Session):
 
     
 def register_user(user_schema: uc, session: Session) -> Users:
-    user_model = Users(**user_schema.model_dump())
-
+    # Check if user exists
     existing_user = session.exec(
         select(Users).where(
             (Users.username == user_schema.username) |
             (Users.email == user_schema.email)
         )
-    ).one_or_none
-
+    ).one_or_none()
+    
     if existing_user:
         raise HTTPException(status_code=400, detail="User already exists")
     
-    #Creating the new user
+    # Create the new user
     hashed_pw = hash_password(user_schema.password)
     new_user = Users(
-        username = user_schema.username,
-        email = user_schema.email,
-        hashed_password = hashed_pw,
-        role = UserRoles.viewer
+        username=user_schema.username,
+        email=user_schema.email,
+        hashed_password=hashed_pw,
+        role=UserRoles.viewer
     )
 
     session.add(new_user)
@@ -117,3 +116,4 @@ def register_user(user_schema: uc, session: Session) -> Users:
     session.refresh(new_user)
 
     return new_user
+
