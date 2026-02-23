@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import SQLModel
 
 from domains.tasks.routers import task_router
+from domains.users.routers import user_router
 
 
 
@@ -21,3 +22,4 @@ app.add_middleware(
 )
 
 app.include_router(task_router.router)
+app.include_router(user_router.router)
