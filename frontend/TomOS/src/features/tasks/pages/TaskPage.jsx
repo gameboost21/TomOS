@@ -5,6 +5,7 @@ import { useUpdateTask } from "../hooks/useUpdateTask.js";
 import { useDeleteTask } from "../hooks/useDeleteTask.js";
 import { Calendar } from "primereact/calendar"
 import TaskList from "../components/TaskList.jsx";
+// import { useAuth } from "../../users/hooks/useAuth.js";
 
 const EMPTY_FORM = {
         task_name: "",
@@ -20,7 +21,7 @@ function TaskPage() {
     const [form, setForm] = useState(EMPTY_FORM)
     const [showDone, setShowDone] = useState(false)
 
-    const { user } = useAuth()
+    // const { user } = useAuth()
 
     const { task_name, description, due_date, assignee, urgent } = form;
 
