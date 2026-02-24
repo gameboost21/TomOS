@@ -1,34 +1,20 @@
-import { useAuth } from "../../users/hooks/useAuth";
-
-const getAuthHeaders = () => {
-    const { token } = useAuth();
-    return token ?  {
-        "Authorization":`Bearer ${token}`,
-        "Content-Type":"application/json"
-    } : {
-        "Content-Type":"application/json"
-    }
-}
-
-export async function fetchTasks() {
-    const res = await fetch("/api/tasks", {
-        headers: getAuthHeaders()
-    })
+export async function fetchTasks(authFetch) {
+    const res = await authFetch("/api/tasks")
 
     if (!res.ok) {
-        if (res.status === 401) {
-            throw new Error("Unauthorized - please log in")
-        }
         throw new Error("Failed to fetch tasks")
     }
 
     return res.json()
 }
 
-export async function createTask(newTask) {
+export async function createTask(newTask, authFetch) {
     const res = await fetch("/api/tasks", {
         method: "POST",
-        headers: getAuthHeaders(),
+        headers: authFetch ? {
+            "Authorization":`Bearer ${authFetch.token}`,
+            "Content-Type":"application/json"
+        } : {"Content-Type":"application/json"},
         body: JSON.stringify(newTask),
     })
 
@@ -39,10 +25,13 @@ export async function createTask(newTask) {
     return res.json()
 }
 
-export async function updateTaskId(id, updatedTask) {
+export async function updateTaskId(id, updatedTask, authFetch) {
     const res = await fetch(`/api/tasks/${id}`, {
         method: "PUT",
-        headers: getAuthHeaders(),
+        headers: authFetch ? {
+            "Authorization":`Bearer ${authFetch.token}`,
+            "Content-Type":"application/json"
+        }:{"Content-Type":"application/json"},
         body: JSON.stringify(updatedTask)
     })
 
@@ -53,10 +42,13 @@ export async function updateTaskId(id, updatedTask) {
     return res.json()
 }
 
-export async function deleteTaskId(id) {
+export async function deleteTaskId(id, authFetch) {
     const res = await fetch(`/api/tasks/${id}`, {
         method: "DELETE",
-        headers: getAuthHeaders(),
+        headers: authFetch ? {
+            "Authorization":`Bearer ${authFetch.token}`,
+            "Content-Type":"application/json"
+        }:{"Content-Type":"application/json"},
     })
     if (!res.ok) {
         throw new Error(`Failed to delete task with ID: ${id}`)

@@ -20,10 +20,12 @@ function TaskPage() {
     const [form, setForm] = useState(EMPTY_FORM)
     const [showDone, setShowDone] = useState(false)
 
+    const { user } = useAuth()
+
     const { task_name, description, due_date, assignee, urgent } = form;
 
     const {data: tasks, isPending, isError, error} = useTasks()
-    const {mutateAsync, isPending: isCreating} = useCreateTask()
+    const {mutateAsync: createTask, isPending: isCreating} = useCreateTask()
     const {mutateAsync: updateTask} = useUpdateTask();
     const { mutateAsync: deleteTask } = useDeleteTask();
 
@@ -39,7 +41,7 @@ function TaskPage() {
         e.preventDefault()
 
         try {
-            await mutateAsync({
+            await createTask({
               ...form,
               due_date: due_date?.toISOString(),
               done: false
