@@ -6,6 +6,7 @@ from sqlmodel import Session
 
 from domains.users.models.user_models import Users
 from domains.users.schemas.user_schemas import UserCreate as uc
+from domains.users.schemas.user_schemas import LoginRequest
 from domains.users.services.user_service import get_current_user as gcu
 
 router = APIRouter()
@@ -31,8 +32,8 @@ from domains.users.services.user_service import require_viewer as viewer
 
 #User Endpoints
 @router.post("/login")
-def login_user_endpoint(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], session: Session = Depends(get_session)):
-    return login_user_service(form_data.username, form_data.password, session)
+def login_user_endpoint(login_data: LoginRequest, session: Session = Depends(get_session)):
+    return login_user_service(login_data.username, login_data.password, session)
 
 @router.post("/register")
 def register_user_endpoint(user_schema: uc, session: Session = Depends(get_session)):
