@@ -9,14 +9,12 @@ export async function fetchTasks(authFetch) {
 }
 
 export async function createTask(newTask, authFetch) {
-    const res = await fetch("/api/tasks", {
+    const res = await authFetch("/api/tasks", {
         method: "POST",
-        headers: authFetch ? {
-            "Authorization":`Bearer ${authFetch.token}`,
-            "Content-Type":"application/json"
-        } : {"Content-Type":"application/json"},
         body: JSON.stringify(newTask),
     })
+
+    console.log("Response Status:", res.status)
 
     if (!res.ok) {
         throw new Error("Failed to create task")
@@ -26,12 +24,8 @@ export async function createTask(newTask, authFetch) {
 }
 
 export async function updateTaskId(id, updatedTask, authFetch) {
-    const res = await fetch(`/api/tasks/${id}`, {
+    const res = await authFetch(`/api/tasks/${id}`, {
         method: "PUT",
-        headers: authFetch ? {
-            "Authorization":`Bearer ${authFetch.token}`,
-            "Content-Type":"application/json"
-        }:{"Content-Type":"application/json"},
         body: JSON.stringify(updatedTask)
     })
 
@@ -43,12 +37,8 @@ export async function updateTaskId(id, updatedTask, authFetch) {
 }
 
 export async function deleteTaskId(id, authFetch) {
-    const res = await fetch(`/api/tasks/${id}`, {
+    const res = await authFetch(`/api/tasks/${id}`, {
         method: "DELETE",
-        headers: authFetch ? {
-            "Authorization":`Bearer ${authFetch.token}`,
-            "Content-Type":"application/json"
-        }:{"Content-Type":"application/json"},
     })
     if (!res.ok) {
         throw new Error(`Failed to delete task with ID: ${id}`)
