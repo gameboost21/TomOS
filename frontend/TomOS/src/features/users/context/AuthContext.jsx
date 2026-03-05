@@ -1,8 +1,19 @@
+/**
+ * Authentication context provider.
+ *
+ * Exposes `token`, `user`, `isAuthenticated`, `loading`, and helper methods
+ * `login`, `logout`, and `getAuthHeaders` via context to child components.
+ */
 import { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext();
 
+/**
+ * Provide authentication state to the app.
+ *
+ * @param {{children: React.ReactNode}} props
+ */
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);

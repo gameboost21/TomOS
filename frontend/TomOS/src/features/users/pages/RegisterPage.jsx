@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+/**
+ * Registration page component.
+ *
+ * Collects username, email and password and posts to the register API.
+ */
 export default function RegisterPage() {
   const navigate = useNavigate();
 
@@ -33,7 +38,7 @@ export default function RegisterPage() {
       }
 
       navigate("/login");
-    } catch (err) {
+    } catch {
       setError("Registration failed. Please try again.");
     } finally {
       setLoading(false)

@@ -2,6 +2,11 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
+/**
+ * Login page component.
+ *
+ * Handles user credential input and calls `login` from `useAuth`.
+ */
 export default function LoginPage() {
   const { login } = useAuth();
 
@@ -17,7 +22,7 @@ export default function LoginPage() {
 
     try {
       await login(username, password);
-    } catch (err) {
+    } catch {
       setError("Login failed. Check credentials.");
     } finally {
       setLoading(false)

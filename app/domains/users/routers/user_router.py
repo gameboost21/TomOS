@@ -11,8 +11,8 @@ from domains.users.services.user_service import get_current_user as gcu
 
 router = APIRouter()
 
-#from domains.users.services.user_service import get_users as get_users_service
-#from domains.users.services.user_service import get_user as get_user_service
+from domains.users.services.user_service import get_users as get_users_service
+from domains.users.services.user_service import get_user as get_user_service
 from domains.users.services.user_service import register_user as register_user_service
 from domains.users.services.user_service import login_user as login_user_service
 
@@ -22,13 +22,13 @@ from domains.users.services.user_service import require_super_user as su
 from domains.users.services.user_service import require_viewer as viewer
 
 #Admin Endpoints
-#@router.get("/users")
-#def get_all_users_endpoint(user: Users = Depends(admin), session: Session = Depends(get_session)):
-#    return get_users_service()
+@router.get("/users")
+def get_all_users_endpoint(_: Users = Depends(admin), session: Session = Depends(get_session)):
+     return get_users_service(session)
     
-#@router.get("/users/{id}")
-#def get_user_endpoint(user: Users = Depends(admin), session: Session = Depends(get_session)):
-#    return get_user_service()
+@router.get("/users/{id}")
+def get_user_endpoint(id: int, _: Users = Depends(admin), session: Session = Depends(get_session)):
+    return get_user_service(session, id)
 
 #User Endpoints
 @router.post("/login")

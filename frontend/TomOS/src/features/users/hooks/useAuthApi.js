@@ -1,8 +1,19 @@
+/**
+ * Hook providing an authenticated fetch wrapper.
+ *
+ * This hook reads the auth token from `useAuth` and exposes `authFetch`, a
+ * wrapper around `fetch` that automatically includes authorization headers
+ * and handles common status checks.
+ */
 import { useAuth } from "./useAuth";
 
 export function useAuthApi() {
     const { token } = useAuth()
 
+    /**
+     * Build request headers including the Authorization header when available.
+     * @returns {Object<string,string>} Headers map
+     */
     const getAuthHeaders = () => {
         return token ? {
             "Authorization":`Bearer ${token}`,
@@ -10,6 +21,13 @@ export function useAuthApi() {
         } : {"Content-Type":"application/json"}
     }
 
+    /**
+     * Perform a fetch with authorization headers applied.
+     * @param {string} URL - Request URL/path
+     * @param {RequestInit} [options={}] - Fetch options
+     * @returns {Promise<Response>} The fetch response
+     * @throws {Error} When a 401 Unauthorized status is received
+     */
     const authFetch = async (URL, options = {}) => {
         const headers = {
             ...getAuthHeaders(),

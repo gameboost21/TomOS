@@ -16,6 +16,11 @@ const EMPTY_FORM = {
     }
 
 
+/**
+ * Tasks page - lists tasks and provides a form to create tasks.
+ *
+ * Uses task hooks for fetching and mutating tasks and renders `TaskList`.
+ */
 function TaskPage() {
 
     const [form, setForm] = useState(EMPTY_FORM)

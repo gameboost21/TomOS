@@ -1,3 +1,8 @@
+"""Application entrypoint for the FastAPI service.
+
+Configures CORS and mounts domain routers for tasks and users.
+"""
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import SQLModel
