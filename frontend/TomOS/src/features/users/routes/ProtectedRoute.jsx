@@ -2,16 +2,25 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 /**
- * ProtectedRoute component to guard routes that require authentication.
+ * Guard a route by authentication and optionally by role.
  *
- * Wrap route children with this component to redirect unauthenticated
- * users to the login page.
+ * @param {{ children: React.ReactNode, requiredRole?: string }} props
+ *   - `requiredRole`: if provided, the user's role must match (e.g. "admin")
  */
-export default function ProtectedRoute({ children }) {
-  const { isAuthenticated } = useAuth();
+
+export default function ProtectedRoute({ children, requiredRole }) {
+  const { isAuthenticated, loading, user } = useAuth();
+
+  if (loading) {
+    return null
+  }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" replace />;
+  }
+
+  if (requiredRole && user?.role !== requiredRole) {
+    return <Navigate to="/tasks" replace />
   }
 
   return children;

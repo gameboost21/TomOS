@@ -63,13 +63,15 @@ export async function deleteUserId(id, authFetch) {
  * @returns {Promise<void>} Resolves when update succeeds.
  * @throws {Error} When the update request fails.
  */
-export async function updateUserId(id, authFetch, updatedUser) {
-    const res = authFetch(`/api/users/${id}`, {
+export async function updateUserRole(id, role, authFetch) {
+    const res = await authFetch(`/api/users/${id}/role`, {
         method: "PUT",
-        body: JSON.stringify(updatedUser)
+        body: JSON.stringify({ role })
     })
 
     if (!res.ok) {
         throw new Error(`Failed to update user with ID: ${id}`)
     }
+
+    return res.json()
 }

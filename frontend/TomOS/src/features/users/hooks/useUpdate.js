@@ -1,4 +1,4 @@
-import { updateUserId } from "../api/userApi";
+import { updateUserRole } from "../api/userApi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuthApi } from "./useAuthApi";
 
@@ -13,7 +13,7 @@ export function useUpdateUser() {
     const queryClient = useQueryClient()
 
     return useMutation({
-        mutationFn: ({ id, updatedUser }) => updateUserId(id, authFetch, updatedUser),
+        mutationFn: ({ id, role }) => updateUserRole(id, role, authFetch),
 
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: ["users"]})

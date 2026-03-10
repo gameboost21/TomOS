@@ -1,6 +1,8 @@
 import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "../../users/hooks/useAuth"
 
+/* Claude tells me to not use useNavigate here, find out why #*/
+
 function Navbar() {
 
     const {isAuthenticated, user, logout } = useAuth()
@@ -32,6 +34,12 @@ function Navbar() {
                                 <Link className="text-gray-600 hover:text-black transition" to="/knowledge">
                                     Knowledge
                                 </Link>
+                                {/* Only render Admin link for admin-role users */}
+                                {user?.role === "admin" && (
+                                    <Link className="text-red-600 hover:text-red-800 font-medium transition" to="/admin">
+                                        Admin
+                                    </Link>
+                                )}
                             </div>
                         )}
                     </div>

@@ -6,6 +6,7 @@ import { AuthProvider } from "./features/users/context/AuthContext";
 import LoginPage from "./features/users/pages/LoginPage";
 import RegisterPage from "./features/users/pages/RegisterPage";
 import ProtectedRoute from "./features/users/routes/ProtectedRoute";
+import AdminPage from "./features/users/pages/AdminPage";
 
 const queryClient = new QueryClient();
 
@@ -26,7 +27,15 @@ function App() {
                     <TaskPage />
                   </ProtectedRoute>
                 }
-              />
+                />
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedRoute>
+                      <AdminPage />
+                    </ProtectedRoute>
+                  }
+                />
               </Routes>
             </main>
           </div>

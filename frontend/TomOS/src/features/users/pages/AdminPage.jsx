@@ -15,13 +15,11 @@ function AdminPage() {
     const {mutateAsync: updateUser} = useUpdateUser()
     const {mutateAsync: deleteUser} = useDeleteUsers()
 
-    const handleUpdate = async (user, value) => {
+    const handleUpdate = async (user, role) => {
         try {
             await updateUser({
                 id: user.id,
-                updatedUser: {
-                    user_role: value
-                }
+                role
             })
         } catch(err) {
             console.error("Failed to updateu user:", err)

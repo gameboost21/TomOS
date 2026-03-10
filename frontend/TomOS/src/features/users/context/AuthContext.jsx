@@ -9,11 +9,6 @@ import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext();
 
-/**
- * Provide authentication state to the app.
- *
- * @param {{children: React.ReactNode}} props
- */
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
@@ -53,11 +48,16 @@ export function AuthProvider({ children }) {
     setToken(data.access_token)
     localStorage.setItem('token', data.access_token)
 
-    setUser({
-      username: username
-    });
+    const payload = JSON.parse(atob(data.access_token.split(".")[1]))
+    const userData = {
+      username: payload.username,
+      role: payload.role,
+      id: payload.sub
+    };
 
-    localStorage.setItem('user', JSON.stringify({ username }))
+    setUser(userData);
+   
+    localStorage.setItem('user', JSON.stringify(userData))
 
     navigate("/tasks");
   };
@@ -70,15 +70,6 @@ export function AuthProvider({ children }) {
     navigate("/login");
   };
 
-  const getAuthHeaders = () => {
-    return token ? {
-      "Authorization": `Bearer ${token}`,
-      "Content-Type":"application/json"
-    } : {
-      "Content-Type":"application/json"
-    }
-  }
-
   return (
     <AuthContext.Provider
       value={{
@@ -88,7 +79,6 @@ export function AuthProvider({ children }) {
         loading,
         login,
         logout,
-        getAuthHeaders
       }}
     >
       {children}
