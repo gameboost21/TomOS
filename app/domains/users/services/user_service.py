@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 from jose import jwt, JWTError
 from passlib.context import CryptContext
 from sqlmodel import Session, select
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Response
 from fastapi.security import OAuth2PasswordBearer
 from datetime import datetime, timezone, timedelta
 
@@ -121,7 +121,7 @@ require_moderator = require_role([UserRoles.admin, UserRoles.moderator])
 require_super_user = require_role([UserRoles.admin, UserRoles.moderator, UserRoles.super_user])
 require_viewer = require_role([UserRoles.admin, UserRoles.moderator, UserRoles.super_user, UserRoles.viewer])
 
-def get_users(user: Users, session: Session):
+def get_users(session: Session) -> List[Users]:
     """Retrieve all users.
 
     Args:
@@ -132,7 +132,7 @@ def get_users(user: Users, session: Session):
         List[Users]: All users in the database.
     """
     statement = select(Users)
-    users =  session.exec(statement).all()
+    users = session.exec(statement).all()
 
     return users
 
@@ -159,7 +159,41 @@ def get_user(id: int, session: Session):
 
     return user
 
+def delete_user(id: int, session: Session):
+    statement = select(Users).where(Users.id == id)
+    user = session.exec(statement).one_or_none()
 
+    session.delete(user)
+    session.commit()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return Response(status_code=204)
+    
+
+def update_user_role(id: int, role: UserRoles, session: Session) -> Users:
+    """Update a user's role.
+
+    Args:
+        id: User id to update.
+        role: New role to assign.
+        session: Database session.
+
+    Raises:
+        HTTPException: 404 if the user is not found.
+
+    Returns:
+        Users: The updated user instance.
+    """
+    statement = select(Users).where(Users.id == id)
+    user = session.exec(statement).one_or_none()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    user.role = role
+    session.commit()
+    session.refresh(user)
 
 def login_user(username: str, password: str, session: Session):
     """Authenticate a user and return an access token.
