@@ -1,6 +1,7 @@
 from typing import Optional, List, TYPE_CHECKING
 from sqlmodel import SQLModel, Field, Relationship
 from enum import Enum
+from domains.knowledge.models.knowledge_models import Articles
 
 if TYPE_CHECKING:
     from domains.tasks.models.task_models import Task
@@ -19,3 +20,4 @@ class Users(SQLModel, table=True):
     role: UserRoles = Field(default=UserRoles.viewer)
 
     tasks: List["Task"] = Relationship(back_populates="owner")
+    knowledge: List["Articles"] = Relationship(back_populates="owner")
