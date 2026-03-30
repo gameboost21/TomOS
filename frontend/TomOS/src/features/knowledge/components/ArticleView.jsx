@@ -12,7 +12,7 @@
 
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
-import useAuth from "../../users/hooks/useAuth"
+import { useAuth } from "../../users/hooks/useAuth"
 
 function ArticleView({article, onEdit, onDelete}) {
     const { user } = useAuth();

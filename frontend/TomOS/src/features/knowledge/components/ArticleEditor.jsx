@@ -119,3 +119,5 @@ function ArticleEditor({ article, onSave, onCancel, isSaving = false }) {
   );
 
 }
+
+export default ArticleEditor;

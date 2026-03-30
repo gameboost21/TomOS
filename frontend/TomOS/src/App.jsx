@@ -26,6 +26,11 @@ function App() {
                 <Route path="/tasks" element={
                   <ProtectedRoute>
                     <TaskPage />
+                  </ProtectedRoute>
+                }
+                />
+                <Route path="/knowledge" element={
+                  <ProtectedRoute>
                     <KnowledgePage />
                   </ProtectedRoute>
                 }
