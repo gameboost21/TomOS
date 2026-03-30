@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import TaskPage from "./features/tasks/pages/TaskPage";
+import KnowledgePage from "./features/knowledge/pages/KnowledgePage";
 import Navbar from "./features/tasks/components/Navbar";
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import { AuthProvider } from "./features/users/context/AuthContext";
@@ -25,6 +26,7 @@ function App() {
                 <Route path="/tasks" element={
                   <ProtectedRoute>
                     <TaskPage />
+                    <KnowledgePage />
                   </ProtectedRoute>
                 }
                 />
