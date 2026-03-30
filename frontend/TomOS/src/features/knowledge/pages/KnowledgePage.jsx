@@ -61,23 +61,42 @@ function KnowledgePage() {
     setMode("view")
   };
 
-  if (isPending) {
-    return (
-      <div className="knowledge-loading">
-        <div className="loading-dots">
-          <span /><span /><span />
+    // Render loading/error inside the layout so ArticleList always mounts
+  const mainContent = () => {
+    if (isPending) {
+      return (
+        <div className="knowledge-loading">
+          <div className="loading-dots">
+            <span /><span /><span />
+          </div>
         </div>
-      </div>
+      );
+    }
+    if (isError) {
+      return (
+        <div className="knowledge-error">
+          Failed to load knowledge base: {error.message}
+        </div>
+      );
+    }
+    if (mode === "view") {
+      return (
+        <ArticleView
+          article={selectedArticle}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
+      );
+    }
+    return (
+      <ArticleEditor
+        article={mode === "edit" ? selectedArticle : null}
+        onSave={handleSave}
+        onCancel={handleCancel}
+        isSaving={isSaving}
+      />
     );
-  }
-
-  if (isError) {
-    return(
-      <div className="knowledge-error">
-        Failed to load knowledge base: {error.message}
-      </div>
-    );
-  }
+  };
 
   return(
     <>
@@ -94,21 +113,8 @@ function KnowledgePage() {
         />
 
         {/* Main Pane */}
-        <main>
-          {mode === "view" || mode === undefined ?(
-            <ArticleView 
-              article={selectedArticle}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
-          ) :(
-            <ArticleEditor 
-              article={mode === "edit" ? selectedArticle : null}
-              onSave={handleSave}
-              onCancel={handleCancel}
-              isSaving={isSaving}
-            />
-          )}
+        <main className="knowledge-main">
+          {mainContent()}
         </main>
       </div>
     </>
