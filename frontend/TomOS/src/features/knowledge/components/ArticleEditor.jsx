@@ -7,7 +7,7 @@ const EMPTY_FORM = {title: "", body: "", category_id: null, tags: [] };
 function ArticleEditor({ article, onSave, onCancel, isSaving = false }) {
     const [form, setForm] = useState(EMPTY_FORM)
     const [preview, setPreview] = useState(false)
-    const [vaildationError, setValidationError] = useState("")
+    const [validationError, setValidationError] = useState("")
 
     useEffect(() => {
         if (article) {

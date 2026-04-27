@@ -38,5 +38,5 @@ def delete_article_endpoint(id: int, _: Users = Depends(su), session: Session = 
     return delete_article_service(id, session)
 
 @router.put("/knowledge/{id}")
-def update_article_endpoint(id: int, article_schema: ArticleUpdate, _: Users = Depends(viewer), session: Session = Depends(get_session)):
-    return update_article_service(id, article_schema, Session)
+def update_article_endpoint(id: int, article_schema: ArticleUpdate, user: Users = Depends(viewer), session: Session = Depends(get_session)):
+    return update_article_service(id, article_schema, session, user)

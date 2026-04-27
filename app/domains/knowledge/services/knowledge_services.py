@@ -1,4 +1,4 @@
-from sqlmodel import Session, select
+from sqlmodel import Session, select, delete
 from fastapi import HTTPException, Response
 from datetime import datetime, timezone
 
@@ -52,20 +52,28 @@ def delete_article(id: int, session: Session):
 
     
 
-def update_article(id: int, article_schema: ArticleUpdate, session: Session) -> Articles:
+def update_article(id: int, article_schema: ArticleUpdate, session: Session, user: Users) -> Articles:
 
-    updates = article_schema.model_dump(exclude_unset=True).items()
+    updates = article_schema.model_dump(exclude_unset=True, exclude={"tags"})
     
-    statement = select(Articles).where(Articles.id == id)
+    statement = select(Articles).where(Articles.id == id, Articles.owner_id == user.id)
     article = session.exec(statement).one_or_none()
 
     if not article:
         raise HTTPException(status_code=404, detail="Article not found")
     
-    for field, value in updates:
+    for field, value in updates.items():
         setattr(article, field, value)
 
     article.updated_at = datetime.now(timezone.utc)
+
+    if article_schema.tags is not None:
+        session.exec(
+            delete(ArticleTag).where(ArticleTag.article_id == id)
+        )
+
+        for tag_id in article_schema.tags:
+            session.add(ArticleTag(article_id=id, tag_id=tag_id))
 
     session.commit()
     session.refresh(article)

@@ -11,24 +11,34 @@ import { useState, useMemo } from "react";
  */
 
 function ArticleList({ articles = [], selectedId, onSelect, onNew}) {
+    
+    const safeArticles = Array.isArray(articles) ? articles : [];
+    
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [search, setSearch] = useState("")
 
     // Derive unique categories from articles
 
     const categories = useMemo(() => {
-        return articles.filter((a) => {
-            const matchesCategory = 
-                selectedCategory = null || a.category_id === selectedCategory
+        const cats = new Map();
+        safeArticles.forEach((a) => {
+            if (a.category_id != null && !cats.has(a.category_id)) {
+                cats.set(a.category_id, a.category_name ?? `Category ${a.category_id}`)
+            }
+        });
+        return Array.from(cats.entries()).map(([id, name]) => ({ id, name }));
+    }, [safeArticles]);
 
-            const matchesSearch = 
+    const filtered = useMemo(() => {
+        return safeArticles.filter((a) => {
+            const matchesCategory =
+                selectedCategory === null || a.category_id === selectedCategory;
+            const matchesSearch =
                 search.trim() === "" ||
-                a.title.toLowerCase().includes(search.toLowerCase)
-            
+                a.title.toLowerCase().includes(search.toLowerCase());
             return matchesCategory && matchesSearch
         });
-
-    }, [articles, selectedCategory, search]);
+    }, [safeArticles, selectedCategory, search])
 
     return (
         <aside className="knowledge-sidebar">
