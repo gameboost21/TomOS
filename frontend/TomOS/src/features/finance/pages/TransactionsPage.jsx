@@ -124,96 +124,185 @@ function TransactionsPage() {
         <>
             <style>{txStyles + csvUploadStyles}</style>
 
-            <div className="tx-header">
-                <div>
-                    <h1 className="tx-title">Transactions</h1>
-                    <p className="tx-subtitle">
-                        {transactions.length} total · {filtered.length} shown 
-                    </p>
-                </div>
-                <button className="tx-upload-btn" onClick={() => setShowUpload((v) => !v)}>
-                    {showUpload ? "Hide Import" : "↑ Import CSV"}
-                </button>
-            </div>
-            {/* Upload Panel */}
-            {showUpload && (
-                <div className="tx-upload-panel">
-                    <CsvUpload onSuccess={() => setShowUpload(false)} />
-                </div>
-            )}
+            <div className="tx-page">
 
-            {/* Filters */}
-            <div className="tx-filters">
-                <input 
-                    className="tx-search"
-                    type="text"
-                    placeholder="Search payee, description..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                />
-                
-                <select 
-                    className="tx-selext"
-                    value={filterType}
-                    onChange={(e) => setFilterType(e.target.value)}
-                >
-                    <option value=""> All types</option>
-                    <option value="Eingang">Income</option>
-                    <option value="Ausgang">Expenses</option>
-                </select>
-
-                <select
-                    className="tx-select"
-                    value={filterCategory}
-                    onChange={(e) => setFilterCategory(e.target.value)}
-                >
-                    <option value="">All categories</option>
-                    <option value="none">Uncategorised</option>
-                    {categories.map((c) => (
-                        <option key={c.id} value={String(c.id)}>{c.icon} {c.name}</option>
-                    ))}
-                </select>
-
-                {(search || filterType || filterCategory) && (
-                    <button
-                        className="tx-clear-btn"
-                        onClick={() => { setSearch(""); setFilterType(""); setFilterCategory(""); }}
-                    >
-                        Clear
+                {/* Headers*/}
+                <div className="tx-header">
+                    <div>
+                        <h1 className="tx-title">Transactions</h1>
+                        <p className="tx-subtitle">
+                            {transactions.length} total · {filtered.length} shown 
+                        </p>
+                    </div>
+                    <button className="tx-upload-btn" onClick={() => setShowUpload((v) => !v)}>
+                        {showUpload ? "Hide Import" : "↑ Import CSV"}
                     </button>
+                </div>
+                {/* Upload Panel */}
+                {showUpload && (
+                    <div className="tx-upload-panel">
+                        <CsvUpload onSuccess={() => setShowUpload(false)} />
+                    </div>
                 )}
-            </div>
 
-            {/* Bulk actions Bar */}
-            {selected.size > 0 && (
-                <div className="tx-bulk-bar">
-                    <span className="tx-bulk-count">{selected.size} selected</span>
+                {/* Filters */}
+                <div className="tx-filters">
+                    <input 
+                        className="tx-search"
+                        type="text"
+                        placeholder="Search payee, description..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+                    
                     <select 
-                        className="tx-select"
-                        value={bulkCategory}
-                        onChange={(e) => setBulkCategory(e.target.value)}
+                        className="tx-selext"
+                        value={filterType}
+                        onChange={(e) => setFilterType(e.target.value)}
                     >
-                        <option value="">Assign a Category</option>
-                        <option value="none">Remove Category</option>
+                        <option value=""> All types</option>
+                        <option value="Eingang">Income</option>
+                        <option value="Ausgang">Expenses</option>
+                    </select>
+
+                    <select
+                        className="tx-select"
+                        value={filterCategory}
+                        onChange={(e) => setFilterCategory(e.target.value)}
+                    >
+                        <option value="">All categories</option>
+                        <option value="none">Uncategorised</option>
                         {categories.map((c) => (
                             <option key={c.id} value={String(c.id)}>{c.icon} {c.name}</option>
                         ))}
                     </select>
-                    <button
-                        className="tx-bulk-assign-btn"
-                        onClick={handleBulkAssign}
-                        disabled={!bulkCategory || isBulkPending}
-                    >
-                        {isBulkPending ? "Assigning..." : "Apply"}
-                    </button>
-                    <button className="tx-clear-btn" onClick={() => setSelected(new Set())}>
-                        Deselect all
-                    </button>
-                </div>
-            )}
 
-            {/* Table */}
-            
+                    {(search || filterType || filterCategory) && (
+                        <button
+                            className="tx-clear-btn"
+                            onClick={() => { setSearch(""); setFilterType(""); setFilterCategory(""); }}
+                        >
+                            Clear
+                        </button>
+                    )}
+                </div>
+
+                {/* Bulk actions Bar */}
+                {selected.size > 0 && (
+                    <div className="tx-bulk-bar">
+                        <span className="tx-bulk-count">{selected.size} selected</span>
+                        <select 
+                            className="tx-select"
+                            value={bulkCategory}
+                            onChange={(e) => setBulkCategory(e.target.value)}
+                        >
+                            <option value="">Assign a Category</option>
+                            <option value="none">Remove Category</option>
+                            {categories.map((c) => (
+                                <option key={c.id} value={String(c.id)}>{c.icon} {c.name}</option>
+                            ))}
+                        </select>
+                        <button
+                            className="tx-bulk-assign-btn"
+                            onClick={handleBulkAssign}
+                            disabled={!bulkCategory || isBulkPending}
+                        >
+                            {isBulkPending ? "Assigning..." : "Apply"}
+                        </button>
+                        <button className="tx-clear-btn" onClick={() => setSelected(new Set())}>
+                            Deselect all
+                        </button>
+                    </div>
+                )}
+
+                {/* Table */}
+                {isPending ? (
+                    <div className="tx-loading">Loading Transactions</div>
+                ) : filtered.length === 0 ? (
+                    <div className="tx-empty">
+                        {transactions.lenght === 0
+                        ? "No transactions yet - import a CSV to get started."
+                        : "No transactions matching your filters"}
+                    </div>
+                ) : (
+                    <div className="tx-table-wrap">
+                        <table className="tx-table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <input type="checkbox" checked={allSelected} onChange={toggleAll} />
+                                    </th>
+                                    <th className="tx-th">Date</th>
+                                    <th className="tx-th">Payee</th>
+                                    <th className="tx-th">Description</th>
+                                    <th className="tx-th">Category</th>
+                                    <th className="tx-th tx-th-amount">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filtered.map((tx) => {
+                                    const isIncome = tx.transaction_type === "Eingang";
+                                    const isSelected = selected.has(tx.id);
+                                    const cat = tx.category_id ? categoryMap[tx.category_id] : null;
+
+                                    return (
+                                        <tr
+                                            key={tx.id}
+                                            className={`tx-row ${isSelected ? "tx-row-selected" : ""}`}
+                                            onClick={() => toggleOne(tx.id)}
+                                        >
+                                            <td className="tx-td tx-td-check" onClick={(e) => e.stopPropagation()}>
+                                                <input 
+                                                    type="checkbox"
+                                                    checked={isSelected}
+                                                    onChange={() => toggleOne(tx.id)} 
+                                                />
+                                            </td>
+
+                                            <td className="tx-td tx-td-date">{fmtDate(tx.payment_date)}</td>
+
+                                            <td className="tx-td tx-td-party">
+                                                <div className="tx-party-name">
+                                                    {isIncome ? tx.payer : tx.payee}
+                                                </div>
+                                                {tx.iban && (
+                                                    <div className="tx-party-iban">{tx.iban}</div>
+                                                )}
+                                            </td>
+
+                                            <td className="tx-td tx-td-desc">
+                                                <span title={tx.description}>
+                                                    {tx.description?.slice(0, 50) == "-"}
+                                                    {tx.description?.length > 50 ? "..." : ""}
+                                                </span>
+                                            </td>
+
+                                            <td className="tx-td" onClick={(e) => e.stopPropagation()}>
+                                                <select
+                                                    className="tx-cat-select"
+                                                    value={tx.category_id ?? "none"}
+                                                    onChange={(e) => handleRowCategory(tx.id, e.target.value)}
+                                                    style={cat ? {color: cat.color} : {}}
+                                                >
+                                                    <option value="none">- uncategorised</option>
+                                                    {categories.map((c) => (
+                                                        <option key={c.id} value={String(c.id)}>
+                                                            {c.icon} {c.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </td>
+                                            <td className={`tx-td tx-td-amount ${isIncome ? "tx-income" : "tx-expense"}`}>
+                                                {isIncome ? "+" : ""}{fmt(tx.amount)}
+                                            </td>
+                                        </tr>
+                                    )
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+            </div>
         </>
     )
 }
